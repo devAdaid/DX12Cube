@@ -192,9 +192,13 @@ XMFLOAT4X4 mProj = XMFLOAT4X4(
 	0.0f, 0.0f, 1.0f, 0.0f,
 	0.0f, 0.0f, 0.0f, 1.0f);
 
-float mTheta = 1.5f * XM_PI;
-float mPhi = XM_PIDIV4;
-float mRadius = 5.0f;
+float mTheta;
+float mPhi = 1.0f;
+float mRadius = 4.0f;
+
+// 키 입력
+bool isLeftKeyPressed;
+bool isRightKeyPressed;
 
 // 초기화
 void CreateRootSignature();
@@ -310,6 +314,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (wParam == VK_ESCAPE)
 		{
 			PostQuitMessage(0);
+		}
+		else if (wParam == VK_LEFT)
+		{
+			isLeftKeyPressed = true;
+		}
+		else if (wParam == VK_RIGHT)
+		{
+			isRightKeyPressed = true;
+		}
+		break;
+	case WM_KEYUP:
+		if (wParam == VK_LEFT)
+		{
+			isLeftKeyPressed = false;
+		}
+		else if (wParam == VK_RIGHT)
+		{
+			isRightKeyPressed = false;
 		}
 		break;
 	case WM_DESTROY:
@@ -485,7 +507,15 @@ void Update()
 	// TODO: 키 입력 받기
 	{
 	}
-	mTheta += 0.001f;
+
+	if (isLeftKeyPressed)
+	{
+		mTheta += 0.0005f;
+	}
+	if (isRightKeyPressed)
+	{
+		mTheta -= 0.0005f;
+	}
 
 	float x = mRadius * sinf(mPhi) * cosf(mTheta);
 	float z = mRadius * sinf(mPhi) * sinf(mTheta);
@@ -696,11 +726,11 @@ void InitTriangle()
 		{{-1.0f, -1.0f, -1.0f}, {1.0f,0.0f,0.0f,1.0f}},
 		{{-1.0f, +1.0f, -1.0f}, {0.0f,1.0f,0.0f,1.0f}},
 		{{+1.0f, +1.0f, -1.0f}, {0.0f,0.0f,1.0f,1.0f}},
-		{{+1.0f, -1.0f, -1.0f}, {1.0f,0.0f,0.0f,1.0f}},
-		{{-1.0f, -1.0f, +1.0f}, {0.0f,1.0f,0.0f,1.0f}},
-		{{-1.0f, +1.0f, +1.0f}, {0.0f,0.0f,1.0f,1.0f}},
-		{{+1.0f, +1.0f, +1.0f}, {1.0f,0.0f,0.0f,1.0f}},
-		{{+1.0f, -1.0f, +1.0f}, {0.0f,1.0f,0.0f,1.0f}},
+		{{+1.0f, -1.0f, -1.0f}, {1.0f,1.0f,0.0f,1.0f}},
+		{{-1.0f, -1.0f, +1.0f}, {0.0f,1.0f,1.0f,1.0f}},
+		{{-1.0f, +1.0f, +1.0f}, {1.0f,0.0f,1.0f,1.0f}},
+		{{+1.0f, +1.0f, +1.0f}, {1.0f,1.0f,1.0f,1.0f}},
+		{{+1.0f, -1.0f, +1.0f}, {0.0f,0.0f,0.0f,1.0f}},
 	};
 
 	UINT16 triangleIndices[] =
