@@ -222,7 +222,9 @@ struct ObjectConstantBuffer
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
-	char padding[256 - sizeof(WorldViewProj)];
+	XMFLOAT3 EyePos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	char padding[256 - sizeof(WorldViewProj) - sizeof(EyePos)];
 };
 
 ID3D12Resource* gConstantBuffer = nullptr;
@@ -338,6 +340,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// PostQuitMessage()는 메시지에 WM_QUIT을 넣는다.
 		PostQuitMessage(0);
 		break;
+	case WM_SIZE:
+		// Save the new client area dimensions.
+		gClientWidth= LOWORD(lParam);
+		gClientHeight = HIWORD(lParam);
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
@@ -537,6 +543,7 @@ void Update()
 	XMMATRIX worldViewProj = world * view * proj;
 
 	XMStoreFloat4x4(&gConstantBufferData.WorldViewProj, XMMatrixTranspose(worldViewProj));
+	XMStoreFloat3(&gConstantBufferData.EyePos, pos);
 
 	memcpy(gCbvDataBegin, &gConstantBufferData, sizeof(gConstantBufferData));
 }
