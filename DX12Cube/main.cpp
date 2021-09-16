@@ -161,7 +161,7 @@ void Release();
 typedef struct _Vertex
 {
 	XMFLOAT3 position;
-	XMFLOAT4 color;
+	XMFLOAT3 normal;
 } Vertex;
 
 ID3D12Resource* gVertexBuffer;
@@ -682,7 +682,7 @@ void CreatePSO()
 	D3D12_INPUT_ELEMENT_DESC inputElementDesc[] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(XMFLOAT3), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(XMFLOAT3), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 	};
 
 	ID3DBlob* vertexShader = nullptr;
@@ -723,14 +723,41 @@ void InitTriangle()
 {
 	Vertex triangleVertices[] =
 	{
-		{{-1.0f, -1.0f, -1.0f}, {1.0f,0.0f,0.0f,1.0f}},
-		{{-1.0f, +1.0f, -1.0f}, {0.0f,1.0f,0.0f,1.0f}},
-		{{+1.0f, +1.0f, -1.0f}, {0.0f,0.0f,1.0f,1.0f}},
-		{{+1.0f, -1.0f, -1.0f}, {1.0f,1.0f,0.0f,1.0f}},
-		{{-1.0f, -1.0f, +1.0f}, {0.0f,1.0f,1.0f,1.0f}},
-		{{-1.0f, +1.0f, +1.0f}, {1.0f,0.0f,1.0f,1.0f}},
-		{{+1.0f, +1.0f, +1.0f}, {1.0f,1.0f,1.0f,1.0f}},
-		{{+1.0f, -1.0f, +1.0f}, {0.0f,0.0f,0.0f,1.0f}},
+		// front face
+		{{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}},
+		{{-1.0f, +1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}},
+		{{+1.0f, +1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}},
+		{{+1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}},
+
+		// back face
+		{{-1.0f, -1.0f, +1.0f}, {0.0f, 0.0f, 1.0f}},
+		{{-1.0f, +1.0f, +1.0f}, {0.0f, 0.0f, 1.0f}},
+		{{+1.0f, +1.0f, +1.0f}, {0.0f, 0.0f, 1.0f}},
+		{{+1.0f, -1.0f, +1.0f}, {0.0f, 0.0f, 1.0f}},
+
+		// left face
+		{{-1.0f, -1.0f, +1.0f}, {-1.0f, 0.0f, 0.0f}},
+		{{-1.0f, +1.0f, +1.0f}, {-1.0f, 0.0f, 0.0f}},
+		{{-1.0f, +1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}},
+		{{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}},
+
+		// right face
+		{{+1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}},
+		{{+1.0f, +1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}},
+		{{+1.0f, +1.0f, +1.0f}, {1.0f, 0.0f, 0.0f}},
+		{{+1.0f, -1.0f, +1.0f}, {1.0f, 0.0f, 0.0f}},
+
+		// top face
+		{{-1.0f, +1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}},
+		{{-1.0f, +1.0f, +1.0f}, {0.0f, 1.0f, 0.0f}},
+		{{+1.0f, +1.0f, +1.0f}, {0.0f, 1.0f, 0.0f}},
+		{{+1.0f, +1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}},
+
+		// bottom face
+		{{-1.0f, -1.0f, +1.0f}, {0.0f, -1.0f, 0.0f}},
+		{{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}},
+		{{+1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}},
+		{{+1.0f, -1.0f, +1.0f}, {0.0f, -1.0f, 0.0f}},
 	};
 
 	UINT16 triangleIndices[] =
@@ -744,20 +771,20 @@ void InitTriangle()
 		4, 7, 6,
 
 		// left face
-		4, 5, 1,
-		4, 1, 0,
+		8, 9, 10,
+		8, 10, 11,
 
 		// right face
-		3, 2, 6,
-		3, 6, 7,
+		12, 13, 14,
+		12, 14, 15,
 
 		// top face
-		1, 5, 6,
-		1, 6, 2,
+		16, 17, 18,
+		16, 18, 19,
 
 		// bottom face
-		4, 0, 3,
-		4, 3, 7
+		20, 21, 22,
+		20, 22, 23
 	};
 
 	const UINT vertexBufferSize = sizeof(triangleVertices);

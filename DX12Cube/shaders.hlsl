@@ -20,12 +20,12 @@ struct PSInput
     float4 color : COLOR;
 };
 
-PSInput VSMain(float4 position : POSITION, float4 color : COLOR)
+PSInput VSMain(float4 position : POSITION, float3 normal : NORMAL)
 {
     PSInput result;
 
     result.position = mul(position, gWorldViewProj);
-    result.color = color;
+    result.color = float4(normal, 1.0f);
 
     return result;
 }
